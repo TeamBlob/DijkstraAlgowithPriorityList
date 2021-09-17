@@ -10,16 +10,34 @@ namespace Project_2
     {
         public int noOfVertex { get; set; }
         public int[,] matrixG;
-        
+        public LinkedList<Edge>[] adjacencylist;
+
         public Graph(int noOfVertex)
         {
             this.noOfVertex = noOfVertex;
-            this.matrixG = new int[noOfVertex, noOfVertex];
+            matrixG = new int[noOfVertex, noOfVertex];
+            adjacencylist = new LinkedList<Edge>[noOfVertex];
+
+            //initialize adjacency lists for all the vertices
+            for (int i = 0; i < noOfVertex; i++)
+            {
+                adjacencylist[i] = new LinkedList<Edge>();
+            }
+
         }
         public void addEdges(int u, int v, int weight)
         {
+            // For Matrix
             matrixG[u, v] = weight;
             matrixG[v, u] = weight;
+
+            // Adjacency List
+            Edge edge = new Edge(u, v, weight);
+            adjacencylist[u].AddFirst(edge);
+
+            edge = new Edge(v, u, weight);
+            adjacencylist[v].AddFirst(edge); //for undirected graph
+
         }
         public void PrintMatrix()
         {
@@ -33,7 +51,7 @@ namespace Project_2
 
             for (int i = 0; i < noOfVertex; i++)
             {
-                if(i < 10)
+                if (i < 10)
                     Console.Write("{0} | [ ", i);
                 else
                     Console.Write("{0}  [ ", i);

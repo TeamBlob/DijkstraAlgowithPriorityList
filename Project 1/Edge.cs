@@ -6,33 +6,16 @@ using System.Threading.Tasks;
 
 namespace Project_2
 {
-    public class Vertex : IComparable // For Priority Queue
+    public class Edge
     {
         public int u { get; set; } // Source Vertex
         public int v { get; set; } // Destination Vertex
         public int w { get; set; } // Cost of Travel
-
-        public Vertex(int u, int v, int w)
+        public Edge(int u, int v, int w) // For Graph Adjency List
         {
             this.u = u;
             this.v = v;
             this.w = w;
         }
-        public int CompareTo(object obj)
-        {
-            Vertex inNode = (Vertex)obj;
-            int inValue = inNode.w;
-
-            if(inValue > w)
-                return -1;
-            else if (inValue == w)
-                return 0;
-            else
-                return 1;
-
-        }
-
-
-
     }
 }

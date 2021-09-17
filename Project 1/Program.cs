@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project_2;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -53,8 +54,17 @@ namespace Project_2
             g.PrintMatrix();
             Console.In.ReadLine();
 
+
+
             dijkstraAlgo(g, 0);
+
             Console.In.ReadLine();
+            dijkstra_GetMinDistances(g, 0);
+
+            Console.In.ReadLine();
+
+
+
         }
         static void dijkstraAlgo(Graph g, int src)
         {
@@ -100,14 +110,19 @@ namespace Project_2
                     }
                 }
             }
-            Console.WriteLine("Vertex   Distance from Source\n");
+            Console.WriteLine("Dijkstra Algorithm: (Adjacency Matrix + Priority Queue)");
             for (int i = 0; i < g.noOfVertex; ++i)
-                Console.WriteLine("{0} \t\t {1}\n", i, dist[i]);
+            {
+                Console.WriteLine("Source Vertex: " + src + " to vertex " + i +
+                " distance: " + dist[i]);
+            }
+                
         }
-        private static List<int> Neighbors(Graph g,int source)
+        private static List<int> Neighbors(Graph g, int source)
         {
             List<int> tempNeighbors = new List<int>();
-            for (int i = 0; i < g.noOfVertex; i++){
+            for (int i = 0; i < g.noOfVertex; i++)
+            {
                 if (g.matrixG[source, i] == 0)
                     continue;
                 tempNeighbors.Add(i);
@@ -119,7 +134,84 @@ namespace Project_2
         {
             return g.matrixG[source, vertex];
         }
+        static void dijkstra_GetMinDistances(Graph g, int sourceVertex)
+        {
+            int INFINITY = Int32.MaxValue;
+            bool[] SPT = new bool[g.noOfVertex];
 
+            // create heapNode for all the vertices
+            HeapNode[] heapNodes = new HeapNode[g.noOfVertex];
+            for (int i = 0; i < g.noOfVertex; i++)
+            {
+                heapNodes[i] = new HeapNode();
+                heapNodes[i].vertex = i;
+                heapNodes[i].distance = INFINITY;
+            }
 
+            //decrease the distance for the first index
+            heapNodes[sourceVertex].distance = 0;
+
+            //add all the vertices to the MinHeap
+            MinHeap minHeap = new MinHeap(g.noOfVertex);
+            for (int i = 0; i < g.noOfVertex; i++)
+            {
+                minHeap.insert(heapNodes[i]);
+            }
+            //while minHeap is not empty
+            while (!minHeap.isEmpty())
+            {
+                //extract the min
+                HeapNode extractedNode = minHeap.extractMin();
+
+                //extracted vertex
+                int extractedVertex = extractedNode.vertex;
+                SPT[extractedVertex] = true;
+
+                //iterate through all the adjacent vertices
+                LinkedList<Edge> list = g.adjacencylist[extractedVertex];
+                for (int i = 0; i < list.Count; i++)
+                {
+                    Edge edge = list.ElementAt(i);
+                    int destination = edge.v;
+                    //only if destination vertex is not present in SPT
+                    if (SPT[destination] == false)
+                    {
+                        ///check if distance needs an update or not
+                        //means check total weight from source to vertex_V is less than
+                        //the current distance value, if yes then update the distance
+                        int newKey = heapNodes[extractedVertex].distance + edge.w;
+                        int currentKey = heapNodes[destination].distance;
+                        if (currentKey > newKey)
+                        {
+                            decreaseKey(minHeap, newKey, destination);
+                            heapNodes[destination].distance = newKey;
+                        }
+                    }
+                }
+            }
+            //print SPT
+            printDijkstra(g, heapNodes, sourceVertex);
+
+        }
+        static void decreaseKey(MinHeap minHeap, int newKey, int vertex)
+        {
+
+            //get the index which distance's needs a decrease;
+            int index = minHeap.indexes[vertex];
+
+            //get the node and update its value
+            HeapNode node = minHeap.mH[index];
+            node.distance = newKey;
+            minHeap.bubbleUp(index);
+        }
+        static void printDijkstra(Graph g, HeapNode[] resultSet, int sourceVertex)
+        {
+            Console.WriteLine("Dijkstra Algorithm: (Adjacency List + Min Heap)");
+            for (int i = 0; i < g.noOfVertex; i++)
+            {
+                Console.WriteLine("Source Vertex: " + sourceVertex + " to vertex " + +i +
+                " distance: " + resultSet[i].distance);
+            }
+        }
     }
 }
