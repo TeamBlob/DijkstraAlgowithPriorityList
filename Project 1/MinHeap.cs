@@ -9,34 +9,34 @@ namespace Project_2
 
     public class MinHeap
     {
-        public int capacity;
+        public int size;
         public int currentSize;
-        public HeapNode[] mH;
+        public HeapNode[] queue;
         public int[] indexes; //will be used to decrease the distance
 
-        public MinHeap(int capacity)
+        public MinHeap(int size)
         {
-            this.capacity = capacity;
-            mH = new HeapNode[capacity + 1];
-            indexes = new int[capacity];
-            mH[0] = new HeapNode();
-            mH[0].distance = Int32.MinValue;
-            mH[0].vertex = -1;
+            this.size = size;
+            queue = new HeapNode[size + 1];
+            indexes = new int[size];
+            queue[0] = new HeapNode();
+            queue[0].distance = Int32.MinValue;
+            queue[0].vertex = -1;
             currentSize = 0;
         }
         public void display()
         {
             for (int i = 0; i <= currentSize; i++)
             {
-                Console.WriteLine(" " + mH[i].vertex + " distance " + mH[i].distance);
+                Console.WriteLine(" " + queue[i].vertex + " distance " + queue[i].distance);
             }
             Console.WriteLine("________________________");
         }
-        public void insert(HeapNode x)
+        public void Enqueue(HeapNode x)
         {
             currentSize++;
             int idx = currentSize;
-            mH[idx] = x;
+            queue[idx] = x;
             indexes[x.vertex] = idx;
             bubbleUp(idx);
         }
@@ -45,27 +45,29 @@ namespace Project_2
         {
             int parentIdx = pos / 2;
             int currentIdx = pos;
-            while (currentIdx > 0 && mH[parentIdx].distance > mH[currentIdx].distance)
+            while (currentIdx > 0 && queue[parentIdx].distance > queue[currentIdx].distance)
             {
-                HeapNode currentNode = mH[currentIdx];
-                HeapNode parentNode = mH[parentIdx];
+                HeapNode currentNode = queue[currentIdx];
+                HeapNode parentNode = queue[parentIdx];
 
                 //swap the positions
                 indexes[currentNode.vertex] = parentIdx;
                 indexes[parentNode.vertex] = currentIdx;
+
                 swap(currentIdx, parentIdx);
+
                 currentIdx = parentIdx;
                 parentIdx = parentIdx / 2;
             }
         }
-        public HeapNode extractMin()
+        public HeapNode Dequeue()
         {
-            HeapNode min = mH[1];
-            HeapNode lastNode = mH[currentSize];
+            HeapNode min = queue[1];
+            HeapNode lastNode = queue[currentSize];
             // update the indexes[] and move the last node to the top
             indexes[lastNode.vertex] = 1;
-            mH[1] = lastNode;
-            mH[currentSize] = null;
+            queue[1] = lastNode;
+            queue[currentSize] = null;
             sinkDown(1);
             currentSize--;
             return min;
@@ -75,19 +77,19 @@ namespace Project_2
             int smallest = k;
             int leftChildIdx = 2 * k;
             int rightChildIdx = 2 * k + 1;
-            if (leftChildIdx < heapSize() && mH[smallest].distance > mH[leftChildIdx].distance)
+            if (leftChildIdx < heapSize() && queue[smallest].distance > queue[leftChildIdx].distance) 
             {
                 smallest = leftChildIdx;
             }
-            if (rightChildIdx < heapSize() && mH[smallest].distance > mH[rightChildIdx].distance)
+            if (rightChildIdx < heapSize() && queue[smallest].distance > queue[rightChildIdx].distance)
             {
                 smallest = rightChildIdx;
             }
             if (smallest != k)
             {
 
-                HeapNode smallestNode = mH[smallest];
-                HeapNode kNode = mH[k];
+                HeapNode smallestNode = queue[smallest];
+                HeapNode kNode = queue[k];
 
                 //swap the positions
                 indexes[smallestNode.vertex] = k;
@@ -98,9 +100,9 @@ namespace Project_2
         }
         public void swap(int a, int b)
         {
-            HeapNode temp = mH[a];
-            mH[a] = mH[b];
-            mH[b] = temp;
+            HeapNode temp = queue[a];
+            queue[a] = queue[b];
+            queue[b] = temp;
         }
         public bool isEmpty()
         {

@@ -50,21 +50,45 @@ namespace Project_2
 
             g.addEdges(13, 15, 1); //n
 
-
+            g = generateGraph(16);
             g.PrintMatrix();
             Console.In.ReadLine();
 
 
+            var watch = new System.Diagnostics.Stopwatch();
 
+            watch.Start();
             dijkstraAlgo(g, 0);
+            watch.Stop();
+
+            Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
+            watch.Reset();
 
             Console.In.ReadLine();
+            watch.Start();
             dijkstra_GetMinDistances(g, 0);
-
+            watch.Stop();
+            Console.WriteLine($"Execution Time: {watch.ElapsedMilliseconds} ms");
             Console.In.ReadLine();
 
 
 
+        }
+        static Graph generateGraph(int noOfVertex)
+        {
+            Graph g = new Graph(noOfVertex);
+            Random r = new Random();
+            int w = 0; //
+            for (int i = 0; i < noOfVertex; i++)
+            {
+                for(int j = 0; j < noOfVertex; j++)
+                {
+                    if (i != j)
+                        g.addEdges(i, j, r.Next(0, 10));
+                }
+            }
+
+            return g;
         }
         static void dijkstraAlgo(Graph g, int src)
         {
@@ -155,13 +179,13 @@ namespace Project_2
             MinHeap minHeap = new MinHeap(g.noOfVertex);
             for (int i = 0; i < g.noOfVertex; i++)
             {
-                minHeap.insert(heapNodes[i]);
+                minHeap.Enqueue(heapNodes[i]);
             }
             //while minHeap is not empty
             while (!minHeap.isEmpty())
             {
                 //extract the min
-                HeapNode extractedNode = minHeap.extractMin();
+                HeapNode extractedNode = minHeap.Dequeue();
 
                 //extracted vertex
                 int extractedVertex = extractedNode.vertex;
@@ -200,7 +224,7 @@ namespace Project_2
             int index = minHeap.indexes[vertex];
 
             //get the node and update its value
-            HeapNode node = minHeap.mH[index];
+            HeapNode node = minHeap.queue[index];
             node.distance = newKey;
             minHeap.bubbleUp(index);
         }
