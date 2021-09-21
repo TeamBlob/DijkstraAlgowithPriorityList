@@ -76,5 +76,18 @@ namespace Project_2
             }
             Console.Write("\r\n");
         }
+        public void PrintList()
+        {
+            for(int i = 0; i < adjacencylist.Length; i++)
+            {
+                Console.Write("{0} |", i);
+                for(int j = 0; j < adjacencylist[i].Count; j++)
+                {
+                    Console.Write(" -> {0}", adjacencylist[i].ElementAt(j).v);
+                }
+                Console.Write("\r\n");
+            }
+            Console.Write("\r\n");
+        }
     }
 }
